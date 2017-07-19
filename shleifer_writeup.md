@@ -26,7 +26,7 @@ We end up with:
 
 and the videos in the notebook.
 
-#### `draw_lines` modifications with `Huber` Regression
+#### `draw_lines` modifications with Huber Regression
 
 Step 6 was the modification to `draw_lines` {Note that I chose to do the consolidation in the function in `infer_and_draw_lines`, since I didn't want to corrupt the function that was doing the annotation with other logic.}
 
@@ -35,12 +35,15 @@ Then we find the best line to fit the left lane segments and right lane segments
 
 There were a few difficult parts in this part of the exercise. First reshaping the data from (x1,y1,x2, y2) format to (x,y) and then reshaping it back was annoying (especially when combined with reasoning about (0,0) being top left!).
 
-The larger challenge, and the reason I couldn't use `LinearRegression` in my final solution, was the median/ boundary with the fields on the right. These are lines and edges with similar slopes to the lane lines, parts of which are contained in the top of our region of interest. None of my attempts at parameter tuning could prevent the inclusion of the left median in the annotation of the challenge video, so my only option was to make the consolidation procedure more resistant to outliers by optimizing for the median absolute error for some samples (Huber) rather than the mean squared error (OLS). According to the sklearn documentation
+The larger challenge, and the reason I couldn't use `LinearRegression` in my final solution, was the median/ boundary with the fields on the right. These are lines and edges with similar slopes to the lane lines, parts of which are contained in the top of our region of interest. None of my attempts at parameter tuning could prevent the inclusion of the left median in the annotation of the challenge video, so my only option was to make the consolidation procedure more resistant to outliers by optimizing for the median absolute error for some samples (Huber) rather than the mean squared error (OLS). According to the sklearn documentation,
 
 > The Huber Regressor optimizes the squared loss for the samples where |(y - X'w) / sigma| < epsilon and the absolute loss for the samples (outliers) where |(y - X'w) / sigma| > epsilon
 
 This way, even though my algorithm is incorrectly considering the line segments of the median as the same as the segments in the lane line, they do not have an outsized impact on the result.
 
+
+### Challenge
+The challenge took a fair amount of time, but almost effort was wasted. All I had to do was to stop gray scaling. It is literally impossible to for a human to see the lane line when the road turns gray in grayscale, so it probably isn't that easy for `Canny` to find an edge.
 
 ### Shortcomings
 
